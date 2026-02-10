@@ -1,0 +1,5 @@
+sqlalchemy
+psycopg[binary]
+pymongo
+redis
+alembic
