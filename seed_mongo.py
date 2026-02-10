@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 import random
+import os
 from datetime import UTC, datetime, timedelta
 
 from pymongo import MongoClient
 
 from mongo_orders_repository import OrdersRepository
 
-MONGO_URI = "mongodb://admin:admin@localhost:27017/?authSource=admin"
+MONGO_URI = os.getenv("MONGO_URI", "mongodb://admin:admin@localhost:27017/?authSource=admin")
 DB_NAME = "training_db"
 COLLECTION_NAME = "customer_orders"
 SAMPLE_SIZE = 2000

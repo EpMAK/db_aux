@@ -1,4 +1,20 @@
 services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: demo_app
+    restart: "no"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+psycopg://app_user:app_pass@postgres:5432/app_db
+      MONGO_URI: mongodb://admin:admin@mongodb:27017/?authSource=admin
+    command: sh -c "alembic upgrade head && python orm_alembic_demo.py"
+
   postgres:
     image: postgres:17
     container_name: local_postgres
@@ -11,6 +27,11 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app_user -d app_db"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
 
   mongodb:
     image: mongo:8
@@ -23,6 +44,11 @@ services:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   redis:
     image: redis:8
