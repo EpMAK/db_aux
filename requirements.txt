@@ -3,3 +3,5 @@ psycopg[binary]
 pymongo
 redis
 alembic
+pytest
+Faker
